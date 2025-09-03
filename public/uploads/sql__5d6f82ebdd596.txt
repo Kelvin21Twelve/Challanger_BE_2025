@@ -1,0 +1,3 @@
+ALTER TABLE `users` ADD `deleted_at` TIMESTAMP NULL DEFAULT NULL AFTER `updated_at`;
+
+ALTER TABLE `users` ADD `civil_id` VARCHAR(255) NULL AFTER `deleted_at`, ADD `dob` DATE NULL AFTER `civil_id`, ADD `job_title` VARCHAR(255) NULL AFTER `dob`, ADD `join_date` DATE NULL AFTER `job_title`, ADD `nationality` VARCHAR(255) NULL AFTER `join_date`, ADD `salary` DECIMAL NULL AFTER `nationality`, ADD `visa_type` VARCHAR(255) NULL AFTER `salary`, ADD `visa_start` DATE NULL AFTER `visa_type`, ADD `visa_end` DATE NULL AFTER `visa_start`, ADD `pass_no` VARCHAR(255) NULL AFTER `visa_end`, ADD `pass_start` DATE NULL AFTER `pass_no`, ADD `pass_end` DATE NULL AFTER `pass_start`;
