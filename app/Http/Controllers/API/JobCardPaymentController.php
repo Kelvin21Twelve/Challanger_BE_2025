@@ -41,6 +41,19 @@ class JobCardPaymentController extends Controller
             //     return response()->json(['error' => true, 'data' => 'greater_amount']);
             // } else {
                 # code...
+              //get balance $amount
+                $job_id = $request->input("job_id");
+                $payment_exist = JobCardsCalculation::where('job_id', $job_id)->get();
+                if ($payment_exist) {
+                    foreach ($payment_exist as $key => $value) {
+                        $payment_exist_bal = $value['balance'];
+                    }
+                }
+
+                if ($amount > $payment_exist_bal) {
+                    // echo"1";die;
+                    return response()->json(['error' => true, 'data' => 'Please enter amount smaller then balance']);
+                }
                 $job_card_payment = new JobCardPayment();
                 $job_card_payment->fill($request->all());
                 $job_card_payment->amount = $request->amount;
@@ -50,7 +63,7 @@ class JobCardPaymentController extends Controller
                 $job_card_payment->job_id = $request->job_id;
                 $job_card_payment->user_id = $user_id;
                 $job_card_payment->save();
-                $job_id = $request->input("job_id");
+               
                 $amount = $request->input("amount");
                 $balance = $request->input("balance");
                 if (!empty($job_id)) {
@@ -64,14 +77,7 @@ class JobCardPaymentController extends Controller
                         // $job_card_details = JobCard::where(['id' => $job_id])->update(['status' => 'delivery']);
                         // $cab_details = CabNo::where(['job_id' => $job_id])->update(['job_status' => 'delivery']);
                     }
-                    //get balance $amount
-                    $payment_exist = JobCardsCalculation::where('job_id', $job_id)->get();
-                    if ($payment_exist) {
-                        foreach ($payment_exist as $key => $value) {
-                            $payment_exist_bal = $value['balance'];
-                        }
-                    }
-
+                  
                     if (!empty($payment_exist_bal) && $payment_exist_bal != '0') {
                         if ($amount <= $payment_exist_bal) {
                             $remaining = ($payment_exist_bal - $amount);
