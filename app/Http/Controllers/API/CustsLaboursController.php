@@ -107,10 +107,12 @@ class CustsLaboursController extends Controller {
 
     public function add_customers_labours(Request $request){
       // print_r($request->labour);exit;
-        $get_labour=Labour::where('id',$request->id)->where('is_delete',0)->first();
-        //$get_labour=Labour::where('id',$request->labour)->where('is_delete',0)->first();
+      //  echo $request->id;exit;
+       // $get_labour=Labour::where('id',$request->id)->where('is_delete',0)->first();
+       $get_labour=Labour::where('id',$request->labour)->where('is_delete',0)->first();
+        //print_r($get_labour);exit;
         if($get_labour){
-          //  print_r($get_labour);exit;
+          //  
             $user_id = $this->request->user()->id;
             $cust_labours = new CustomersLabour();
             $cust_labours->user_id = $user_id;
