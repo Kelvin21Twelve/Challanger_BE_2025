@@ -110,7 +110,7 @@ class CustsLaboursController extends Controller {
         $get_labour=Labour::where('id',$request->id)->where('is_delete',0)->first();
         //$get_labour=Labour::where('id',$request->labour)->where('is_delete',0)->first();
         if($get_labour){
-            print_r($get_labour);exit;
+          //  print_r($get_labour);exit;
             $user_id = $this->request->user()->id;
             $cust_labours = new CustomersLabour();
             $cust_labours->user_id = $user_id;
