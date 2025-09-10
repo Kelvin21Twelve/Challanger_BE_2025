@@ -523,6 +523,7 @@ class JobCardController extends Controller
         $is_date_btw = $request->input("is_date_btw");
         $from_date = $request->input("from_date");
         $to_date = $request->input("to_date");
+        $status = $request->input("status");
 
         $query = DB::table('job_cards');
         $cases = array();
