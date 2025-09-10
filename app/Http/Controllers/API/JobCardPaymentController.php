@@ -42,6 +42,8 @@ class JobCardPaymentController extends Controller
             // } else {
                 # code...
               //get balance $amount
+                $amount = $request->input("amount");
+                $balance = $request->input("balance");
                 $job_id = $request->input("job_id");
                 $payment_exist = JobCardsCalculation::where('job_id', $job_id)->get();
                 if ($payment_exist) {
@@ -52,7 +54,7 @@ class JobCardPaymentController extends Controller
 
                 if ($amount > $payment_exist_bal) {
                     // echo"1";die;
-                    return response()->json(['error' => true, 'data' => 'Please enter amount smaller then balance']);
+                    return response()->json(['error' => true, 'data' => 'Please enter an amount smaller than the balance']);
                 }
                 $job_card_payment = new JobCardPayment();
                 $job_card_payment->fill($request->all());
@@ -64,8 +66,7 @@ class JobCardPaymentController extends Controller
                 $job_card_payment->user_id = $user_id;
                 $job_card_payment->save();
                
-                $amount = $request->input("amount");
-                $balance = $request->input("balance");
+               
                 if (!empty($job_id)) {
                     // get job details
                     $get_job_card_details = JobCard::findOrFail($job_id);
