@@ -33,8 +33,10 @@ class CustsLaboursController extends Controller {
     }
 
     public function update(Request $request, $id) {
+             
+
         $user_id = $this->request->user()->id;
-        $cust_labours = CustomersLabour::find($id);
+        $cust_labours = CustomersLabour::find($request->id);
         if ($cust_labours) {
             $old_total = $cust_labours->quantity * $cust_labours->price;
             $cust_labours->update($request->all());
@@ -108,7 +110,7 @@ class CustsLaboursController extends Controller {
         $get_labour=Labour::where('id',$request->id)->where('is_delete',0)->first();
         //$get_labour=Labour::where('id',$request->labour)->where('is_delete',0)->first();
         if($get_labour){
-            // print_r($get_labour);exit;
+            print_r($get_labour);exit;
             $user_id = $this->request->user()->id;
             $cust_labours = new CustomersLabour();
             $cust_labours->user_id = $user_id;

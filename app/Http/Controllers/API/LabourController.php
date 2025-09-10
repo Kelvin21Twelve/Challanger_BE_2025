@@ -40,8 +40,11 @@ class LabourController extends Controller {
     }
 
     public function get_labour(Request $request){
+
         if($request['car_type']){
+
             $get_model=CarModel::where('model',@$request['car_type'])->first();
+          // print_r($get_model);exit;
             if($get_model){
                 $get_labour=Labour::where([['car_type','=',@$get_model->id],['is_delete','=',0]])->get();
                 if($get_labour){
