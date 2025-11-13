@@ -138,6 +138,11 @@ class UserController extends Controller {
      */
     public function details() {
         $user = Auth::user();
+        $role_id = $user->department;
+        $permission = Role::where(['id' => $role_id])->first();
+        //  echo"<pre>";print_r($permission);exit;
+        $permission_slug = ($permission) ? $permission->permission_slug : "";
+        $user['permission_slug'] = $permission_slug;
         return response()->json(['success' => $user], $this->successStatus);
     }
 

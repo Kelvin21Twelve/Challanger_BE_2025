@@ -340,7 +340,26 @@ class JobCardController extends Controller
         // }
 
     }
+    public function payment_refund(Request $request, $id)
+    {
+        $job_card_calc = JobCardsCalculation::where(['job_id' => $id])->first();
+        print_r($job_card_calc->balance);exit;
+        
+        if ($job_card_calc->balance) {
+            
+            $job_card_details = JobCardsCalculation::where(['job_id' => $id])->update(['balance' => 'paid_wait']);
 
+            $job_card_calc->job_id = (int) $id;
+            $job_card_calc->balance =round($customer_used_spare_parts_total, 3);
+            //print_r($job_card_calc);
+            
+            $job_card_calc->save();
+
+            return response()->json(['success' => true, 'data' => $JobCard]);
+        } else {
+            return response()->json(['success' => false, 'data' => ""]);
+        }
+    }
     public function updateJobDiscount(Request $request, $id)
     {
          $JobCard = JobCard::find($id);
@@ -693,7 +712,7 @@ class JobCardController extends Controller
             }
 
 
-            return response()->json(['success' => true, 'data' => $user_name,'labour_desc' => $labour_desc, 'cab_no' => $cab_no, 'car_engine' => $applied_desc, 'applied_desc' => $car_engine, 'max_desc' => $max_desc]);
+            return response()->json(['success' => true, 'data' => $user_name,'labour_desc' => $labour_desc, 'cab_no' => $cab_no, 'car_engine' => $car_engine, 'applied_desc' => $applied_desc, 'max_desc' => $max_desc]);
 
            
         }
