@@ -125,6 +125,7 @@ class JobCardController extends Controller
                             'cab_no' => $value->cab_no,
                             'cust_name' => ($job_card['customer_details'])?($job_card['customer_details']->cust_name):'',
                             'cust_name_id' => ((string) $job_card['customer_details'])?(string) $job_card['customer_details']->id:'',
+                            'applied_desc' => $job_card['applied_desc'],
                             'phone' => ($job_card['customer_details'])?$job_card['customer_details']->phone:'',
                             'plate_no' => $job_card['vehicle_details']->plate_no,
                             'view' => $job_card['vehicle_details']['view']->make,
@@ -338,6 +339,24 @@ class JobCardController extends Controller
         //         }
         // }
 
+    }
+
+    public function updateJobDiscount(Request $request, $id)
+    {
+         $JobCard = JobCard::find($id);
+        
+        if ($JobCard) {
+            
+            $JobCard->applied_desc = $request->input("discount");
+            $date_obj = new DateTime('now', new DateTimeZone('Asia/Kolkata'));
+
+            $JobCardup=JobCard::where('id',$id);
+            $JobCard->update(array('applied_desc' => $request->input("discount")));
+
+            return response()->json(['success' => true, 'data' => $JobCard]);
+        } else {
+            return response()->json(['success' => false, 'data' => ""]);
+        }
     }
 
     public function update(Request $request, $id)
@@ -659,6 +678,7 @@ class JobCardController extends Controller
                     $user_id = $value['user_id'];
                     $cab_no = $value['cab_no'];
                     $car_engine = $value['car_engine'];
+                    $applied_desc = $value['applied_desc'];
                 }
             }
             if ($user_id) {
@@ -667,13 +687,15 @@ class JobCardController extends Controller
                     foreach ($user_details as $key => $value) {
                         $user_name = $value['name'];
                         $labour_desc = $value['labour_desc'];
+                        $max_desc = $value['max_desc'];
                     }
                 }
             }
 
 
+            return response()->json(['success' => true, 'data' => $user_name,'labour_desc' => $labour_desc, 'cab_no' => $cab_no, 'car_engine' => $applied_desc, 'applied_desc' => $car_engine, 'max_desc' => $max_desc]);
 
-            return response()->json(['success' => true, 'data' => $user_name,'labour_desc' => $labour_desc, 'cab_no' => $cab_no, 'car_engine' => $car_engine]);
+           
         }
     }
 
@@ -686,34 +708,39 @@ class JobCardController extends Controller
         $balance = '0.00';
         if ($job_no) {
             $job_details =  JobCard::where('job_no', '=', $job_no)->get();
-
+        
             if ($job_details) {
                 foreach ($job_details as $key => $value) {
                     $job_id = $value['id'];
                     $status = $value['status'];
+                    $applied_desc = $value['applied_desc'];
                 }
             }
 
             if ($job_id) {
                 $job_info =  JobCardPayment::where('job_id', '=', $job_id)->get(['amount', 'pay_by', 'remaining']);
-
+                //echo $job_id;exit;
                 $job_card_calculation =  JobCardsCalculation::where('job_id', '=', $job_id)->get(['grand_total', 'balance', 'labour_disc']);
                 // print_r($job_info);
-                // print_r($job_id);
+                 //print_r($job_id);
                 // print_r($job_card_calculation);die;
                 $labour_disc=$job_card_calculation[0]['labour_disc'];
-
+                $balance = 0;
                 if ($job_card_calculation) {
                     foreach ($job_card_calculation as $key => $value1) {
                         $grand_total = $value1['grand_total'];
-                        $balance = $value1['balance'];
+                        //$balance = $value1['balance'];
                         $labour_disc = $value1['labour_disc'];
+                    }
+                    if ($grand_total > 0) {
+                        $grand_total = $grand_total - $applied_desc;
                     }
                 }
                 if ($job_info) {
                     $overdue = 0;
                     foreach ($job_info as $key => $value2) {
-                        // $grand_total = $value2['grand_total'];
+                        $balance = $balance + $value2['amount'];
+                        //$grand_total = $value2['grand_total'];
                         // print_r($value2['amount']);
                         if ($value2['pay_by'] == 2) {
                             $overdue = $overdue + $value2['amount'];
@@ -723,10 +750,13 @@ class JobCardController extends Controller
                         // $balance = $value2['balance'];
 
                     }
+                    $balance = $grand_total - $balance;
+                    //echo $balance;exit;
                 }
+                //echo $grand_total;exit;
                 if ($job_info) {
                     
-                    return response()->json(['success' => true, 'data' => $job_info, 'overdue' => $overdue, 'status' => $status, 'balance' => $balance, 'grand_total' => $grand_total,'labour_disc'=>$labour_disc]);
+                    return response()->json(['success' => true, 'data' => $job_info, 'overdue' => $overdue, 'status' => $status, 'balance' => $balance, 'grand_total' => $grand_total,'labour_disc'=>$labour_disc,'applied_desc'=>$applied_desc]);
                 } else {
                     return response()->json(['error' => true, 'data' => '', 'balance' => $balance, 'grand_total' => $grand_total,'labour_disc'=>$labour_disc]);
                 }

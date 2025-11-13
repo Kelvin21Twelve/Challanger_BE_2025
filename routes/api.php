@@ -167,7 +167,12 @@ Route::group(['middleware' => 'auth:api'], function() {
 
     //----------------- Job Card ---------------------------
     Route::post('job_card_insert', 'API\JobCardController@store')->middleware(['middleware' => 'permission:job-card-add']);
+
     Route::put('job_card_update/{id}', 'API\JobCardController@update')->middleware(['middleware' => 'permission:job-card-edit']);
+
+    //Route::put('job_card_discount/{id}', 'API\JobCardController@updateJobDiscount')->middleware(['middleware' => 'permission:job-card-edit']); 
+    Route::post('job_card_discount/{id}', 'API\JobCardController@updateJobDiscount');
+
     Route::put('job_card_delete/{id}', 'API\JobCardController@delete');
     Route::get('get_job_cards', 'API\JobCardController@get_job_cards');
     Route::get('get_Empty_job_cards', 'API\JobCardController@get_Empty_job_cards');

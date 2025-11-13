@@ -46,7 +46,8 @@ class LabourController extends Controller {
             $get_model=CarModel::where('model',@$request['car_type'])->first();
           // print_r($get_model);exit;
             if($get_model){
-                $get_labour=Labour::where([['car_type','=',@$get_model->id],['is_delete','=',0]])->get();
+                $get_labour = Labour::where('is_delete', 0)->where(function ($query) use ($get_model) {$query->where('car_type', @$get_model->id)->orWhere('apply_for_all', 'yes');})->get();
+                //$get_labour=Labour::where([['car_type','=',@$get_model->id],['is_delete','=',0]])->get();
                 if($get_labour){
                     return response()->json(['success' => true, 'data' => $get_labour]);
                 }else{

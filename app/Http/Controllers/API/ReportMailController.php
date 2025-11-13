@@ -111,7 +111,7 @@ class ReportMailController extends Controller
             }
 
             if(!empty($to)){
-               Mail::to($to)->send(new CustomerMail($main_array));
+               Mail::to('kelvin@21twelveinteractive.in')->send(new CustomerMail($main_array));
             }
 
         } catch (Exception $ex) {

@@ -12,6 +12,8 @@ use App\CarModel;
 use App\JobCard;
 use App\NewSpareParts;
 use App\Expense;
+use App\JobCardsCalculation;
+
 
 class CommonController extends Controller {
 
@@ -115,7 +117,28 @@ class CommonController extends Controller {
            
             $model = new $model_all;
             $dynamic_model = $model::find($id);
+
             if ($dynamic_model) {
+                //  echo 'Herer';
+                // echo '<pre>';
+                // print_r($dynamic_model);
+                //echo $dynamic_model->job_id;exit;
+               //  if(isset($dynamic_model->job_id) && ($model_name == "CustomersUsedSpareParts" || $model_name == "CustomersNewSpareParts" || $model_name == "CustomersLabour"))
+               //  {
+               //      $job_card_calculation =  JobCardsCalculation::where('job_id', '=', $dynamic_model->job_id)->get(['grand_total', 'balance', 'labour_disc']);
+
+               //      if($job_card_calculation)
+               //      {
+               //          $balance = $job_card_calculation[0]['balance'];
+               //          $total = $dynamic_model->quantity * $dynamic_model->price;
+               //          if($balance < $total)
+               //          {
+
+               //              return response()->json(['success' => true, 'used_part_calc' => [], "status_calc" => 'no_update']);
+               //          }
+               //      }
+               //  }
+               // // exit;
                 $dynamic_model->is_delete = 1;
                 $dynamic_model->save();
                 if ($model_name == "CustomersUsedSpareParts") {

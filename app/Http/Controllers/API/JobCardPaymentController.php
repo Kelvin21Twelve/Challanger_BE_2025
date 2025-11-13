@@ -52,10 +52,10 @@ class JobCardPaymentController extends Controller
                     }
                 }
 
-                if ($amount > $payment_exist_bal) {
-                    // echo"1";die;
-                    return response()->json(['error' => true, 'data' => 'Please enter an amount smaller than the balance']);
-                }
+                // if ($amount > $payment_exist_bal) {
+                //     // echo"1";die;
+                //     return response()->json(['error' => true, 'data' => 'Please enter an amount smaller than the balance']);
+                // }
                 $job_card_payment = new JobCardPayment();
                 $job_card_payment->fill($request->all());
                 $job_card_payment->amount = $request->amount;
@@ -80,7 +80,7 @@ class JobCardPaymentController extends Controller
                     }
                   
                     if (!empty($payment_exist_bal) && $payment_exist_bal != '0') {
-                        if ($amount <= $payment_exist_bal) {
+                        //if ($amount <= $payment_exist_bal) {
                             $remaining = ($payment_exist_bal - $amount);
                             $job_card_payment->remaining = round($remaining, 3);
                             $job_card_payment->user_id = $user_id;
@@ -93,10 +93,10 @@ class JobCardPaymentController extends Controller
                             //     }
                             // }
                             return response()->json(['success' => true, 'data' => $job_card_payment]);
-                        } else {
-                            // echo"1";die;
-                            return response()->json(['error' => true, 'data' => 'greater_amount']);
-                        }
+                        // } else {
+                        //     // echo"1";die;
+                        //     return response()->json(['error' => true, 'data' => 'greater_amount']);
+                        // }
                     } else {
                         // echo"sdf";exit;
                         return response()->json(['success' => true, 'data' => $job_card_payment]);

@@ -38,7 +38,9 @@ class UserController extends Controller {
             $refresh = request('refresh');
             $role_id = $user->department;
             // $base_url="http://21twelveinteractive.cf/challenger/api/";
+            //$base_url="https://grp.challenger-co.com/api/";
             $base_url="http://127.0.0.1:8000/api/";
+            //http://127.0.0.1/
             // $excel_url="http://".request('ip_address')."/excel/newsparepartsample.xlsx";
             // $uploads_url="http://".request('ip_address')."/uploads/";
             //echo $base_url; echo $excel_url; echo $uploads_url; die();

@@ -70,6 +70,7 @@ class CustUsedSparePartsController extends Controller {
         }
         $job_card_calc = JobCardsCalculation::where(['job_id' => $job_id])->first();
         $main_arr = array();
+       // echo $job_card_calc->balance - $total;exit;
         if ($job_card_calc) { // Update
             $job_card_calc->used_spare_parts_total = round($customer_used_spare_parts_total, 3);
             $grand_total = $customer_used_spare_parts_total + $job_card_calc->new_spare_parts_total + $job_card_calc->labours_total;
