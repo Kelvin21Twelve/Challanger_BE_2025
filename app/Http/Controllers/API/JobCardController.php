@@ -724,7 +724,8 @@ class JobCardController extends Controller
                 // print_r($job_info);
                  //print_r($job_id);
                 // print_r($job_card_calculation);die;
-                $labour_disc=$job_card_calculation[0]['labour_disc'];
+                //echo 'sfss';exit;
+                //$labour_disc=$job_card_calculation[0]['labour_disc'];
                 $balance = 0;
                 if ($job_card_calculation) {
                     foreach ($job_card_calculation as $key => $value1) {
@@ -746,7 +747,6 @@ class JobCardController extends Controller
                             $overdue = $overdue + $value2['amount'];
                             # code...
                         }
-
                         // $balance = $value2['balance'];
 
                     }
@@ -756,9 +756,9 @@ class JobCardController extends Controller
                 //echo $grand_total;exit;
                 if ($job_info) {
                     
-                    return response()->json(['success' => true, 'data' => $job_info, 'overdue' => $overdue, 'status' => $status, 'balance' => $balance, 'grand_total' => $grand_total,'labour_disc'=>$labour_disc,'applied_desc'=>$applied_desc]);
+                    return response()->json(['success' => true, 'data' => $job_info, 'overdue' => $overdue, 'status' => $status, 'balance' => $balance, 'grand_total' => $grand_total,'labour_disc'=>0,'applied_desc'=>$applied_desc]);
                 } else {
-                    return response()->json(['error' => true, 'data' => '', 'balance' => $balance, 'grand_total' => $grand_total,'labour_disc'=>$labour_disc]);
+                    return response()->json(['error' => true, 'data' => '', 'balance' => $balance, 'grand_total' => $grand_total,'labour_disc'=>0]);
                 }
             }
         }

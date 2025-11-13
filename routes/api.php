@@ -172,6 +172,7 @@ Route::group(['middleware' => 'auth:api'], function() {
 
     //Route::put('job_card_discount/{id}', 'API\JobCardController@updateJobDiscount')->middleware(['middleware' => 'permission:job-card-edit']); 
     Route::post('job_card_discount/{id}', 'API\JobCardController@updateJobDiscount');
+    Route::put('job_card_payment_refund/{id}', 'API\JobCardController@payment_refund');
 
     Route::put('job_card_delete/{id}', 'API\JobCardController@delete');
     Route::get('get_job_cards', 'API\JobCardController@get_job_cards');
