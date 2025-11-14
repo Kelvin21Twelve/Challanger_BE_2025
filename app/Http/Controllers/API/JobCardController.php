@@ -345,7 +345,7 @@ class JobCardController extends Controller
         $job_card_calc = JobCardsCalculation::where(['job_id' => $id])->first();
         print_r($job_card_calc->balance);exit;
         
-        if ($job_card_calc->balance) {
+        if (isset($job_card_calc->balance) && $job_card_calc->balance < 0) {
             
             $job_card_details = JobCardsCalculation::where(['job_id' => $id])->update(['balance' => 'paid_wait']);
 
@@ -355,14 +355,14 @@ class JobCardController extends Controller
             
             $job_card_calc->save();
 
-            return response()->json(['success' => true, 'data' => $JobCard]);
+            return response()->json(['success' => true, 'data' => $job_card_calc]);
         } else {
             return response()->json(['success' => false, 'data' => ""]);
         }
     }
     public function updateJobDiscount(Request $request, $id)
     {
-         $JobCard = JobCard::find($id);
+                 $JobCard = JobCard::find($id);
         
         if ($JobCard) {
             
@@ -372,7 +372,25 @@ class JobCardController extends Controller
             $JobCardup=JobCard::where('id',$id);
             $JobCard->update(array('applied_desc' => $request->input("discount")));
 
-            return response()->json(['success' => true, 'data' => $JobCard]);
+            if($JobCardup)
+            {
+
+                $job_cal_info =  JobCardsCalculation::where('job_id', '=', $id)->where('is_delete', '=', 0)->first();
+                if($job_cal_info->balance > 0)
+                {
+                   
+                    $balance = $job_cal_info->balance - $request->input("discount");
+                }
+                else
+                {
+
+                    $balance = $job_cal_info->balance - $request->input("discount");
+                }
+                
+                $job_cal_info->update(array('balance' => $balance));
+            }
+
+            return response()->json(['success' => true, 'data' => $job_cal_info]);
         } else {
             return response()->json(['success' => false, 'data' => ""]);
         }
@@ -390,7 +408,8 @@ class JobCardController extends Controller
         if ($job_cal_info) {
             if (($job_cal_info['grand_total'] != 0) && ($job_cal_info['balance'] != 0)) {
                 # code...
-                if ($request->status == 'delivery') {
+                echo $job_cal_info['balance'];exit;
+                if ($request->status == 'delivery' && $job_cal_info['balance'] > 0) {
                     //     echo "1.1";
                     //    die;
                     return response()->json(['success' => false, 'data' => "",'msg'=>"Please pay remaining amount after you can change status to delivery."]);
