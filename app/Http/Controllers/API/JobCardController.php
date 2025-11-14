@@ -383,7 +383,6 @@ class JobCardController extends Controller
                 }
                 else
                 {
-
                     $balance = $job_cal_info->balance - $request->input("discount");
                 }
                 
@@ -408,7 +407,7 @@ class JobCardController extends Controller
         if ($job_cal_info) {
             if (($job_cal_info['grand_total'] != 0) && ($job_cal_info['balance'] != 0)) {
                 # code...
-                echo $job_cal_info['balance'];exit;
+               // echo $job_cal_info['balance'];exit;
                 if ($request->status == 'delivery' && $job_cal_info['balance'] > 0) {
                     //     echo "1.1";
                     //    die;
