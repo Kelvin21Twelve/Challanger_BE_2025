@@ -407,7 +407,7 @@ class JobCardController extends Controller
         if ($job_cal_info) {
             if (($job_cal_info['grand_total'] != 0) && ($job_cal_info['balance'] != 0)) {
                 # code...
-               // echo $job_cal_info['balance'];exit;
+               //    echo $job_cal_info['balance'];exit;
                 if ($request->status == 'delivery' && $job_cal_info['balance'] > 0) {
                     //     echo "1.1";
                     //    die;
@@ -1030,6 +1030,7 @@ class JobCardController extends Controller
                     'requested_parts' => $job_card['requested_parts'],
                     'lock_card' => $job_card['lock_card'],
                     'car_engine' => $job_card['car_engine'],
+                    'applied_desc' => $job_card['applied_desc'],
                     'empty' => false
                 );
                 $main_array['job_card_details'] = $data_arr;
