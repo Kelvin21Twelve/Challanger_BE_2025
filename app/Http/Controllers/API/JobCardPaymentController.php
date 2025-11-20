@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\JobCardPayment;
+use App\JobCardPaymentRefund;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\JobCardsCalculation;
@@ -134,6 +135,27 @@ class JobCardPaymentController extends Controller
             $job_card_payment->job_id = $request->job_id;
             $job_card_payment->user_id = $user_id;
             $job_card_payment->save();
+            return response()->json(['success' => true]);
+        }else{
+            return response()->json(['success' => false]);
+        }
+    }
+     public function job_card_payment_refund(Request $request){
+         
+        $user_id = $this->request->user()->id;
+        $job_card_cal = JobCardsCalculation::where(['job_id' => $request['job_id']])->first();
+        if($job_card_cal){
+          
+            $job_card_payment_refund = new JobCardPaymentRefund();
+            $job_card_payment_refund->fill($request->all());
+            $job_card_payment_refund->amount = $job_card_cal['balance'];
+            $job_card_payment_refund->refund_by = 6;
+            $job_card_payment_refund->remaining = 0;
+            $job_card_payment_refund->job_id = $job_card_cal["job_id"];
+            $job_card_payment_refund->user_id = $user_id;
+            $job_card_payment_refund->save();
+            $update_job_card_cal = JobCardsCalculation::where(['job_id' => $request['job_id']])->update(['balance' => 0]);
+
             return response()->json(['success' => true]);
         }else{
             return response()->json(['success' => false]);

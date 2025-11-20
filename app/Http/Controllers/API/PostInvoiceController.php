@@ -24,8 +24,8 @@ class PostInvoiceController extends Controller {
             
             switch ($request['type']) {
                 case "Job_Cards":
-                    
-                    $JobCard =  JobCard::whereDate('created_at', '>=', $request['from_date'])->whereDate('created_at', '<=', $request['to_date'])->get();
+                    $JobCard = JobCard::with("job_card_calculation")->where(['is_delete' => 0])->whereDate('created_at', '>=', $request['from_date'])->whereDate('created_at', '<=', $request['to_date'])->get();
+                    //$JobCard =  JobCard::whereDate('created_at', '>=', $request['from_date'])->whereDate('created_at', '<=', $request['to_date'])->get();
                     
                     return response()->json(['success' => true, 'JobCard' => $JobCard]);
                     break;

@@ -242,6 +242,7 @@ Route::group(['middleware' => 'auth:api'], function() {
     //----------------- Job Card Payment  --------------------------------------
     Route::post('payment_insert', 'API\JobCardPaymentController@store');
     Route::post('insert_labour_discount_entry', 'API\JobCardPaymentController@insert_labour_discount_entry');
+    Route::post('job_card_payment_refund', 'API\JobCardPaymentController@job_card_payment_refund');
 
     //----------------- Account -----------------------
     Route::post('account_insert', 'API\AccountController@store');
