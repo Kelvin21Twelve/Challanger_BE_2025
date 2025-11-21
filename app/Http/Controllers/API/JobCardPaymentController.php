@@ -149,6 +149,7 @@ class JobCardPaymentController extends Controller
             $job_card_payment_refund = new JobCardPaymentRefund();
             $job_card_payment_refund->fill($request->all());
             $job_card_payment_refund->amount = $job_card_cal['balance'];
+            $job_card_payment_refund->refund_reason = $job_card_cal['refund_reason'];
             $job_card_payment_refund->refund_by = 6;
             $job_card_payment_refund->remaining = 0;
             $job_card_payment_refund->job_id = $job_card_cal["job_id"];
