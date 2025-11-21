@@ -43,8 +43,8 @@ class PostInvoiceController extends Controller {
                      return response()->json(['success' => true, 'CustomersUsedSpareParts' => $CustomersUsedSpareParts, 'CustomersNewSpareParts' => $CustomersNewSpareParts]);
                     break;
                 case "All":
-                    
-                    $JobCard =  JobCard::whereDate('created_at', '>=', $request['from_date'])->whereDate('created_at', '<=', $request['to_date'])->get();
+                    $JobCard = JobCard::with("job_card_calculation")->where(['is_delete' => 0])->whereDate('created_at', '>=', $request['from_date'])->whereDate('created_at', '<=', $request['to_date'])->get();
+                    //$JobCard =  JobCard::whereDate('created_at', '>=', $request['from_date'])->whereDate('created_at', '<=', $request['to_date'])->get();
                     $NewSparePurchase =  NewSparePurchase::whereDate('created_at', '>=', $request['from_date'])->whereDate('created_at', '<=', $request['to_date'])->get();
                     $CustomersUsedSpareParts =  CustomersUsedSpareParts::whereDate('created_at', '>=', $request['from_date'])->whereDate('created_at', '<=', $request['to_date'])->get();
                     $CustomersNewSpareParts =  CustomersNewSpareParts::whereDate('created_at', '>=', $request['from_date'])->whereDate('created_at', '<=', $request['to_date'])->get();
