@@ -793,7 +793,7 @@ class JobCardController extends Controller
                     //echo $balance;exit;
                 }
                // echo '<pre>';
-               // print_r($balance);exit;
+               // print_r($job_info_refund);exit;
                 $result = 0;
                  if ($job_info_refund) {
                     $overdue = 0;
