@@ -755,7 +755,8 @@ class JobCardController extends Controller
             }
 
             if ($job_id) {
-                $job_info =  JobCardPayment::where('job_id', '=', $job_id)->get(['amount', 'pay_by', 'remaining']);
+                $job_info =  JobCardPayment::where('job_id', '=', $job_id,)->where('action', 'credit')->get(['amount', 'pay_by', 'remaining']);
+                $job_info_refund =  JobCardPayment::where('job_id', '=', $job_id,)->where('action', 'refund')->get(['id','amount', 'pay_by', 'remaining']);
                 //echo $job_id;exit;
                 $job_card_calculation =  JobCardsCalculation::where('job_id', '=', $job_id)->get(['grand_total', 'balance', 'labour_disc']);
                 // print_r($job_info);
@@ -764,6 +765,7 @@ class JobCardController extends Controller
                 //echo 'sfss';exit;
                 //$labour_disc=$job_card_calculation[0]['labour_disc'];
                 $balance = 0;
+                $refund_balance = 0;
                 if ($job_card_calculation) {
                     foreach ($job_card_calculation as $key => $value1) {
                         $grand_total = $value1['grand_total'];
@@ -790,6 +792,37 @@ class JobCardController extends Controller
                     $balance = $grand_total - $balance;
                     //echo $balance;exit;
                 }
+               // echo '<pre>';
+               // print_r($balance);exit;
+                $result = 0;
+                 if ($job_info_refund) {
+                    $overdue = 0;
+                    foreach ($job_info_refund as $key => $value2) {
+                        $refund_balance = $refund_balance + $value2['amount'];
+                    }
+                    $condition = 0;
+                    // 1. Both negative
+                    if ($balance < 0 && $refund_balance < 0) {
+                        $result = $balance + abs($refund_balance);
+                        $condition = 1;
+                    }
+
+                    // 2. X negative, Y positive
+                    if ($balance < 0 && $refund_balance > 0) {
+                        $result = - (abs($balance) - $refund_balance);
+                        $condition = 1;
+                    }
+
+                    // 3. X positive, Y negative
+                    if ($balance > 0 && $refund_balance < 0) {
+                        $result = $balance + abs($refund_balance);
+                        $condition = 1;
+                    }
+                    $balance = $condition == 1 ? $result : $balance;
+                    
+                    //echo $balance;exit;
+                }
+               
                 //echo $grand_total;exit;
                 if ($job_info) {
                     
