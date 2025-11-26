@@ -1795,4 +1795,146 @@ class ReportController extends Controller
 
 
     //===========================================================================
+        //print_customer_details is done=========================================Done
+    public function print_refund_voucher(Request $request)
+    {
+
+        $user = Auth::user();
+        try {
+ 
+            $job_id = $request->input("job_id");
+            $job_card = JobCard::with("customer_details")->with("vehicle_details", "vehicle_details.view:id,make", "vehicle_details.type:id,model", "vehicle_details.color:id,color", "vehicle_details.agency:id,agency")->where("is_delete", 0)->where('id', $job_id)->first();
+            $cab_no = CabNo::where('job_id', $job_id)->first();
+            $job_info =  JobCardPayment::where('job_id', '=', $job_id)->where('action', 'credit')->get(['amount', 'pay_by', 'remaining']);
+            $job_info_refund =  JobCardPayment::where('job_id', '=', $job_id,)->where('action', 'refund')->get(['id','amount', 'pay_by','refund_by', 'remaining','refund_reason']);
+             $job_card_calculation =  JobCardsCalculation::where('job_id', '=', $job_id)->get(['grand_total', 'balance', 'labour_disc']);
+
+            $overdue = 0;
+            $balance = 0;
+            $refund_balance = 0;
+            $paid = 0;
+            $refund_reason = '';
+            $grand_total = 0;
+                if ($job_card_calculation) {
+                    foreach ($job_card_calculation as $key => $value1) {
+                        $grand_total = $value1['grand_total'];
+                        //$balance = $value1['balance'];
+                        $labour_disc = $value1['labour_disc'];
+                    }
+                    if ($grand_total > 0) {
+                        $grand_total = $grand_total - $job_card['applied_desc'];
+                    }
+                }
+                if ($job_info) {
+                    $overdue = 0;
+                    foreach ($job_info as $key => $value2) {
+                        $balance = $balance + $value2['amount'];
+                        $paid = $paid + $value2['amount'];
+                        //$grand_total = $value2['grand_total'];
+                        // print_r($value2['amount']);
+                        if ($value2['pay_by'] == 2) {
+                            $overdue = $overdue + $value2['amount'];
+                            # code...
+                        }
+                        // $balance = $value2['balance'];
+
+                    }
+                    $balance = $grand_total - $balance;
+                    //echo $balance;exit;
+                }
+            $result = 0;
+            $refund_by = 'Cash';
+            $refund_id = 0;
+                 if ($job_info_refund) {
+                    $overdue = 0;
+                    foreach ($job_info_refund as $key => $value2) {
+                        $refund_balance = $refund_balance + $value2['amount'];
+                        $refund_reason = $value2['refund_reason'];
+                        $refund_by = $value2['refund_by'];
+                        $refund_id = $value2['id'];
+                    }
+                    $condition = 0;
+                    // 1. Both negative
+                    if ($balance < 0 && $refund_balance < 0) {
+                        $result = $balance + abs($refund_balance);
+                        $condition = 1;
+                    }
+
+                    // 2. X negative, Y positive
+                    if ($balance < 0 && $refund_balance > 0) {
+                        $result = - (abs($balance) - $refund_balance);
+                        $condition = 1;
+                    }
+
+                    // 3. X positive, Y negative
+                    if ($balance > 0 && $refund_balance < 0) {
+                        $result = $balance + abs($refund_balance);
+                        $condition = 1;
+                    }
+                    $balance = $condition == 1 ? $result : $balance;
+                    
+                    //echo $balance;exit;
+                }
+            $refund_date = date('Y-m-d');
+            $refund_by_arr = array('1' =>'Cash' , '2' =>'K-NET', '3' =>'Visa', '4' =>'Master');
+           // $pay_by_txt = isset($refund_by_arr[$pay_by]) ?  $refund_by_arr[$pay_by] : '';
+            $main_array = array();
+              
+            if ($job_card) {
+                $data_arr = array(
+                    'id' => $job_card['id'],
+                    'vehicle_id' => $job_card['vehicle'],
+                    'job_no' => $job_card['job_no'],
+                    'cab_no' => $cab_no,
+                    'cust_name' => $job_card['customer_details']->cust_name,
+                    'cust_name_id' => (string) $job_card['customer_details']->id,
+                    'phone' => $job_card['customer_details']->phone,
+                    'plate_no' => $job_card['vehicle_details']->plate_no,
+                    'view' => $job_card['vehicle_details']['view']->make,
+                    'type' => $job_card['vehicle_details']['type']->model,
+                    'view_type' => $job_card['vehicle_details']['view']->make . " - " . $job_card['vehicle_details']['type']->model,
+                    'model' => $job_card['vehicle_details']->model,
+                    'color' => $job_card['vehicle_details']['color']->color,
+                    'agency' => $job_card['vehicle_details']['agency']->agency,
+                    'chasis' => $job_card['vehicle_details']['agency']->chasis_no,
+                    'status' => $job_card['status'],
+                    'entry_date' => $job_card['entry_date'],
+                    'entry_time' => $job_card['entry_time'], // const win = new BrowserWindow({width: 800, height: 600});
+                    'kilo_meters' => $job_card['kilo_meters'],
+                    'approved' => $job_card['approved'],
+                    'returned' => $job_card['returned'],
+                    'warranty' => $job_card['warranty'],
+                    'warranty_days' => $job_card['warranty_days'],
+                    'delivery_date' => $job_card['delivery_date'],
+                    'employee_responsible' => $job_card['employee_responsible'],
+                    'notes' => $job_card['notes'],
+                    'requested_parts' => $job_card['requested_parts'],
+                    'lock_card' => $job_card['lock_card'],
+                    'empty' => false,
+                    'refund_date'=> $refund_date,
+                    'grand_total' => $grand_total,
+                    'refund_balance' => abs($refund_balance),
+                    'refund_reason' => $refund_reason,
+                    'refund_by' => $refund_by,
+                    'paid' => $paid
+                );
+                $main_array['job_card_details'] = $data_arr;
+            }
+        //     echo '<pre>';
+        // print_r($main_array);exit;
+            $view = view("report/print_refund_voucher", compact('main_array'))->render();
+            //echo 'sfswwdddwwfs';exit;
+            //PDF::setOptions(['dpi' => 150, 'defaultFont' => 'dejavu sans']);
+
+            $pdf  = PDF::loadView("report.print_refund_voucher", compact('main_array'));
+
+            $path = public_path('/');
+            $fileName =  $user->id.$job_card['job_no'].$refund_id.'.' . 'pdf';
+            $pdf->save($path . '/' . $fileName);
+            $result = response()->json(['success' => true, 'view' => url('/') . "/" . $fileName]);
+            return $result;
+        } catch (Exception $ex) {
+            return back()->withError($ex->getMessage())->withInput();
+        }
+    }
 }

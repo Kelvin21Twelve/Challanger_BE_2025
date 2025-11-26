@@ -180,7 +180,8 @@ Route::group(['middleware' => 'auth:api'], function() {
     
     Route::get('get_complete_jobs', 'API\JobCardController@get_complete_jobs');
     Route::post('get_complete_job_details', 'API\JobCardController@get_complete_job_details');
-    
+    Route::post('get_refund_receipt', 'API\ReportController@print_refund_voucher');
+    //Route::post('print_customer_details', 'API\ReportController@print_customer_details');
     Route::get('get_cab_history', 'API\JobCardController@get_cab_history');
     
     
