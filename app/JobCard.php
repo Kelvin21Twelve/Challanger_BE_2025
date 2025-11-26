@@ -26,5 +26,8 @@ class JobCard extends Model {
     public function job_card_calculation() {
         return $this->hasOne('App\JobCardsCalculation', 'job_id', 'id');
     }
+    public function job_card_payment() {
+        return $this->hasOne('App\JobCardPayment', 'job_id', 'id');
+    }
 
 }
