@@ -34,11 +34,13 @@ class CustUsedSparePartsController extends Controller {
     }
 
     public function update(Request $request, $id) {
+
         $user_id = $this->request->user()->id;
         $used_parts = CustomersUsedSpareParts::find($id);
         $old_qty = $used_parts->quantity;
         $old_total = $used_parts->quantity * $used_parts->price;
         if ($used_parts) {
+           
             $used_parts->update($request->all());
             $total = $request->input("quantity") * $request->input("price");
             /**Rohit Update qty of used spear parts table */
@@ -55,7 +57,8 @@ class CustUsedSparePartsController extends Controller {
                 UsedSpareParts::where(['id' => $item_id])->update(["balance" => $newBalance]);
             }
             /**End */
-            $main_arr = $this->CalculationUsedSpareParts($user_id, $request->input("job_id"), $total, "add", $old_total);
+           
+            $main_arr = $this->CalculationUsedSpareParts($user_id, $used_parts->job_id, $total, "add", $old_total);
             return response()->json(['success' => true, 'data' => $used_parts, 'used_part_calc' => $main_arr['used_part_calc'], "status_calc" => $main_arr['status_calc']]);
         } else {
             return response()->json(['success' => false, 'data' => ""]);

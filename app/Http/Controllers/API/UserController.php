@@ -108,6 +108,7 @@ class UserController extends Controller {
     }
 
     public function update(Request $request, $id) {
+       
         $validator = Validator::make($request->all(), [
                     'name' => 'required',
                     'email' => 'required|string|email|max:255|unique:users,email,' . $id,
@@ -117,6 +118,7 @@ class UserController extends Controller {
         if ($validator->fails()) {
             return response()->json(['success' => false, 'error' => $validator->errors()], 200);
         }
+
         $user = User::find($id);
         if ($user) {
             $input = $request->all();
